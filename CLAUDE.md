@@ -38,8 +38,11 @@ CI (`.github/workflows/firmware.yml`) builds every push that touches `firmware/`
 ## Related
 
 - Songs: Pandora, the Telegram bot in `bozek-lu/raspberry-projects` (`pi/home/piano.py`, `pi/home/server/piano/`),
-  turns YouTube links into MIDI (right hand channel 1, left hand channel 2) and serves them at
-  `http://homepi.local:8095/songs.json` (`[{file, title, url, seconds, notes, added}]`, files at `/<file>`).
+  queues YouTube links and audio files, converts them (fast basic-pitch or accurate ByteDance on the Pi, or accurate
+  on a computer with `tools/piano-convert.py`), takes ready MIDI files as they are, and serves the songs at
+  `http://homepi.local:8095/songs.json` (`[{file, title, url, seconds, notes, added, source}]`, files at `/<file>`).
+  Converted songs have the right hand on channel 1 and the left on channel 2, folded into the EZ-310's 61 keys;
+  MIDI files sent by the user are stored unchanged.
 - EZ-310 light channels: Function 042/043, default channels 1/2.
 
 ## Rules
