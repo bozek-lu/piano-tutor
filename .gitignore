@@ -1,0 +1,27 @@
+# Secrets: never commit. Wi-Fi credentials etc. stay in local files.
+.env
+*.env
+.env.*
+!env.example
+secrets.h
+!secrets.example.h
+*.pem
+*.key
+
+# ESP-IDF build output
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+
+# Songs (often copyrighted)
+songs/
+
+# Noise
+__pycache__/
+*.pyc
+*.log
+*.bak*
+*.orig*
+.vscode/
+.DS_Store

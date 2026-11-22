@@ -1,0 +1,8 @@
+# Default gitleaks rules plus extras for this repo.
+[extend]
+useDefault = true
+
+[[rules]]
+id = "claude-oauth-token"
+description = "Claude / Anthropic token"
+regex = '''sk-ant-[A-Za-z0-9_-]{20,}'''
