@@ -13,6 +13,7 @@ build/
 sdkconfig
 sdkconfig.old
 managed_components/
+eim_config.toml
 
 # Songs (often copyrighted)
 songs/

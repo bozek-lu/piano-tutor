@@ -1,1 +1,20 @@
 CONFIG_IDF_TARGET="esp32p4"
+
+# Tab5: ESP32-P4 rev 1.x, 16 MB flash, 32 MB PSRAM (settings as in M5MusicTab5)
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_1=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+
+# Logs on the USB-C port (USB Serial/JTAG) so `idf.py monitor` works over the flashing cable
+CONFIG_ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG=y
+
+# The EZ-310 is a USB audio + MIDI composite device; its configuration descriptor can be
+# larger than the 256-byte default, which would make enumeration fail
+CONFIG_USB_HOST_CONTROL_TRANSFER_MAX_SIZE=1024

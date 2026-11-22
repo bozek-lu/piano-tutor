@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tutor UI mockups</title>
+<!--
+  Design mockups of the planned Tab5 tutor UI (1280x720, the Tab5 screen size).
+  Not firmware: the real UI will be LVGL. Render one screen with:
+    msedge --headless --window-size=1280,720 --screenshot=out.png "file:///.../mockups.html#practice"
+  Screens: #songs, #practice, #results
+-->
+<style>
+  :root {
+    --bg: #0f1218; --panel: #171b23; --panel2: #1e2430; --line: #2a3140;
+    --text: #e8ecf3; --muted: #8b94a7; --accent: #4cc2ff; --right: #4cc2ff;
+    --left: #ffa24c; --ok: #4fd18b; --bad: #ff5d6c; --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif; }
+  .screen { display: none; width: 1280px; height: 720px; position: relative; }
+  .screen:target { display: block; }
+  .bar { height: 64px; display: flex; align-items: center; gap: 14px; padding: 0 20px;
+    background: var(--panel); border-bottom: 1px solid var(--line); }
+  .title { font-size: 22px; font-weight: 600; }
+  .muted { color: var(--muted); }
+  .spacer { flex: 1; }
+  .pill { height: 40px; padding: 0 16px; border-radius: 20px; background: var(--panel2);
+    border: 1px solid var(--line); display: inline-flex; align-items: center; gap: 8px; font-size: 16px; }
+  .pill.on { background: rgba(76,194,255,.15); border-color: var(--accent); color: var(--accent); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; height: 40px; }
+  .seg span { padding: 0 16px; display: flex; align-items: center; font-size: 16px; background: var(--panel2); }
+  .seg span + span { border-left: 1px solid var(--line); }
+  .seg span.on { background: var(--accent); color: #06121b; font-weight: 600; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); display: inline-block; }
+  .btn { height: 56px; padding: 0 28px; border-radius: 28px; display: inline-flex; align-items: center;
+    justify-content: center; font-size: 20px; font-weight: 600; background: var(--panel2); border: 1px solid var(--line); }
+  .btn.primary { background: var(--accent); color: #06121b; border: none; }
+  .tag { font-size: 13px; padding: 3px 9px; border-radius: 10px; background: var(--panel2); color: var(--muted); }
+  .r { color: var(--right); } .l { color: var(--left); }
+
+  /* Song list */
+  .songs { display: grid; grid-template-columns: 1fr 440px; height: 656px; }
+  .list { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .song { display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 16px;
+    padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+  .song.sel { border-color: var(--accent); background: #142130; }
+  .song .ico { width: 56px; height: 56px; border-radius: 12px; background: var(--panel2); display: flex;
+    align-items: center; justify-content: center; font-size: 26px; }
+  .song .name { font-size: 20px; font-weight: 600; }
+  .song .meta { font-size: 14px; margin-top: 4px; }
+  .stars { color: #ffd34c; font-size: 18px; letter-spacing: 2px; }
+  .detail { background: var(--panel); border-left: 1px solid var(--line); padding: 26px; display: flex;
+    flex-direction: column; gap: 20px; }
+  .detail h2 { font-size: 28px; }
+  .label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; }
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .mode { border: 1px solid var(--line); background: var(--panel2); border-radius: 12px; padding: 12px; font-size: 15px; }
+  .mode b { display: block; font-size: 17px; margin-bottom: 4px; }
+  .mode.on { border-color: var(--accent); background: rgba(76,194,255,.12); }
+
+  /* Practice */
+  .roll { position: absolute; left: 0; top: 64px; width: 1280px; height: 456px; }
+  .kbd { position: absolute; left: 0; top: 520px; width: 1280px; height: 150px; }
+  .foot { position: absolute; left: 0; top: 670px; width: 1280px; height: 50px; display: flex; align-items: center;
+    gap: 16px; padding: 0 20px; background: var(--panel); border-top: 1px solid var(--line); font-size: 15px; }
+  .prog { flex: 1; height: 10px; border-radius: 5px; background: var(--panel2); position: relative; }
+  .prog .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 26%; background: var(--accent); border-radius: 5px; }
+  .prog .loop { position: absolute; left: 18%; width: 22%; top: -6px; bottom: -6px; border: 2px solid var(--left);
+    border-radius: 8px; }
+  .wait { position: absolute; top: 84px; left: 50%; transform: translateX(-50%); padding: 10px 20px;
+    border-radius: 22px; background: rgba(15,18,24,.85); border: 1px solid var(--line); font-size: 18px; }
+
+  /* Results */
+  .res { display: grid; grid-template-columns: 420px 1fr; gap: 24px; padding: 28px; height: 656px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .big { font-size: 96px; font-weight: 700; line-height: 1; }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 22px; }
+  .stat { background: var(--panel2); border-radius: 12px; padding: 14px; }
+  .stat b { font-size: 28px; display: block; }
+  .bars { display: flex; align-items: flex-end; gap: 8px; height: 340px; margin-top: 14px;
+    border-bottom: 1px solid var(--line); }
+  .bars div { flex: 1; background: var(--panel2); border-radius: 6px 6px 0 0; }
+  .bars div.hot { background: var(--bad); }
+  .note { position: absolute; right: 16px; bottom: 12px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ============ 1. Song list ============ -->
+<section class="screen" id="songs">
+  <div class="bar">
+    <span class="title">Songs</span>
+    <span class="seg"><span class="on">All</span><span>Pandora</span><span>microSD</span></span>
+    <span class="spacer"></span>
+    <span class="pill">⟳ Sync</span>
+    <span class="pill"><span class="dot"></span>Wi-Fi</span>
+    <span class="pill"><span class="dot"></span>EZ-310</span>
+  </div>
+  <div class="songs">
+    <div class="list">
+      <div class="song sel"><div class="ico">♪</div><div><div class="name">Ode to Joy</div>
+        <div class="meta muted">L. v. Beethoven · 1:10 · 212 notes · <span class="r">R</span> + <span class="l">L</span></div></div>
+        <div class="stars">★★☆</div></div>
+      <div class="song"><div class="ico">♪</div><div><div class="name">Minuet in G</div>
+        <div class="meta muted">J. S. Bach (attr.) · 1:45 · 340 notes · <span class="r">R</span> + <span class="l">L</span></div></div>
+        <div class="stars">★☆☆</div></div>
+      <div class="song"><div class="ico">♪</div><div><div class="name">Für Elise (theme)</div>
+        <div class="meta muted">L. v. Beethoven · 0:58 · 186 notes · <span class="r">R</span> + <span class="l">L</span></div></div>
+        <div class="stars muted">☆☆☆</div></div>
+      <div class="song"><div class="ico">♪</div><div><div class="name">Twinkle, Twinkle, Little Star</div>
+        <div class="meta muted">Traditional · 0:40 · 96 notes · <span class="r">R</span> only</div></div>
+        <div class="stars">★★★</div></div>
+      <div class="song"><div class="ico">♪</div><div><div class="name">Canon in D (easy)</div>
+        <div class="meta muted">J. Pachelbel · 2:30 · 410 notes · <span class="r">R</span> + <span class="l">L</span></div></div>
+        <div class="tag">new</div></div>
+    </div>
+    <div class="detail">
+      <div><div class="label">Selected</div><h2>Ode to Joy</h2>
+        <div class="muted" style="margin-top:6px">Last practised yesterday · best 88 %</div></div>
+      <div><div class="label">Hands</div>
+        <span class="seg"><span>Left</span><span>Right</span><span class="on">Both</span></span></div>
+      <div><div class="label">Mode</div>
+        <div class="modes">
+          <div class="mode on"><b>Wait</b><span class="muted">Stops until you play the lit keys</span></div>
+          <div class="mode"><b>Play along</b><span class="muted">Keeps tempo, scores timing</span></div>
+          <div class="mode"><b>Listen</b><span class="muted">Plays and lights the song</span></div>
+        </div></div>
+      <div><div class="label">Tempo</div><span class="pill">−</span> <span class="pill" style="min-width:90px;justify-content:center">80 %</span> <span class="pill">+</span></div>
+      <div class="spacer"></div>
+      <div class="btn primary" style="width:100%">▶ Practise</div>
+    </div>
+  </div>
+  <div class="note">Design mockup, not firmware</div>
+</section>
+
+<!-- ============ 2. Practice ============ -->
+<section class="screen" id="practice">
+  <div class="bar">
+    <span class="pill">‹</span>
+    <span class="title">Ode to Joy</span>
+    <span class="muted">Bar 7 / 24</span>
+    <span class="spacer"></span>
+    <span class="seg"><span>L</span><span>R</span><span class="on">Both</span></span>
+    <span class="pill on">Wait</span>
+    <span class="pill">− 80 % +</span>
+    <span class="pill on">A–B loop</span>
+    <span class="pill">⏸</span>
+  </div>
+  <svg class="roll" id="roll" viewBox="0 0 1280 456"></svg>
+  <div class="wait">Waiting for <b class="r">G4</b> + <b class="l">G2</b></div>
+  <svg class="kbd" id="kbd" viewBox="0 0 1280 150"></svg>
+  <div class="foot">
+    <span class="muted">0:18</span>
+    <div class="prog"><div class="loop"></div><div class="fill"></div></div>
+    <span class="muted">1:10</span>
+    <span>Correct <b style="color:var(--ok)">94 %</b></span>
+  </div>
+  <div class="note" style="bottom:212px">Design mockup, not firmware</div>
+</section>
+
+<!-- ============ 3. Results ============ -->
+<section class="screen" id="results">
+  <div class="bar">
+    <span class="title">Ode to Joy · finished</span>
+    <span class="spacer"></span>
+    <span class="pill">Wait mode · Both hands · 80 %</span>
+  </div>
+  <div class="res">
+    <div class="card">
+      <div class="label">Correct notes</div>
+      <div class="big">91<span style="font-size:48px">%</span></div>
+      <div class="stars" style="font-size:34px;margin-top:10px">★★☆</div>
+      <div class="stats">
+        <div class="stat"><b>193</b><span class="muted">correct</span></div>
+        <div class="stat"><b style="color:var(--bad)">19</b><span class="muted">wrong keys</span></div>
+        <div class="stat"><b>1:32</b><span class="muted">time</span></div>
+        <div class="stat"><b>+3 %</b><span class="muted">vs. best</span></div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column">
+      <div class="label">Mistakes per bar</div>
+      <div class="bars" id="bars"></div>
+      <div class="muted" style="margin-top:10px">Bars 13–16 need work (left hand jump to G2)</div>
+      <div class="spacer"></div>
+      <div style="display:flex;gap:14px">
+        <div class="btn primary">Practise bars 13–16</div>
+        <div class="btn">↻ Again</div>
+        <div class="btn">Songs</div>
+      </div>
+    </div>
+  </div>
+  <div class="note">Design mockup, not firmware</div>
+</section>
+
+<script>
+  // 61 keys like the EZ-310: MIDI 36 (C2) .. 96 (C7)
+  const LO = 36, HI = 96, W = 1280;
+  const isBlack = n => [1, 3, 6, 8, 10].includes(n % 12);
+  const whites = []; for (let n = LO; n <= HI; n++) if (!isBlack(n)) whites.push(n);
+  const ww = W / whites.length, bw = ww * 0.6;
+  const keyX = n => isBlack(n) ? whites.indexOf(n - 1) * ww + ww - bw / 2 : whites.indexOf(n) * ww;
+  const keyW = n => isBlack(n) ? bw : ww;
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const R = css('--right'), L = css('--left');
+
+  // Ode to Joy: right hand melody, left hand roots (beats)
+  const rh = [64,64,65,67,67,65,64,62,60,60,62,64,64,62,62, 64,64,65,67,67,65,64,62,60,60,62,64,62,60,60];
+  const rd = [1,1,1,1,1,1,1,1,1,1,1,1,1.5,.5,2, 1,1,1,1,1,1,1,1,1,1,1,1,1.5,.5,2];
+  const notes = []; let t = 0;
+  rh.forEach((n, i) => { notes.push({ n, t, d: rd[i], h: 'r' }); t += rd[i]; });
+  [48,43,48,43,48,43,48,43].forEach((n, i) => notes.push({ n, t: i * 4, d: 3.8, h: 'l' }));
+
+  const now = 4, ppb = 92, hitY = 450;
+  const roll = document.getElementById('roll');
+  let s = '';
+  for (let n = LO; n <= HI; n++) if (n % 12 === 0)
+    s += `<line x1="${keyX(n)}" y1="0" x2="${keyX(n)}" y2="456" stroke="${css('--line')}" />`;
+  for (let b = 0; b < 6; b++) { const y = hitY - b * 4 * ppb;
+    s += `<line x1="0" y1="${y}" x2="1280" y2="${y}" stroke="${css('--line')}" stroke-dasharray="4 6" />`; }
+  notes.forEach(o => {
+    const yb = hitY - (o.t - now) * ppb, h = o.d * ppb - 4;
+    if (yb < 0 || yb - h > 456 || o.t + o.d <= now) return;
+    const c = o.h === 'r' ? R : L, next = o.t === now || (o.h === 'l' && o.t === 4);
+    const x = keyX(o.n) + 2, w = keyW(o.n) - 4;
+    s += `<rect x="${x}" y="${yb - h}" width="${w}" height="${h}" rx="6" fill="${c}" opacity="${next ? 1 : .55}"
+      ${next ? 'stroke="#fff" stroke-width="2"' : ''}/>`;
+  });
+  s += `<rect x="0" y="${hitY}" width="1280" height="6" fill="${css('--accent')}" opacity=".7"/>`;
+  roll.innerHTML = s;
+
+  // Keyboard: lit keys mirror the EZ-310 lights
+  const lit = { 67: R, 43: L }, kbd = document.getElementById('kbd');
+  let k = '';
+  whites.forEach((n, i) => {
+    k += `<rect x="${i * ww + 1}" y="0" width="${ww - 2}" height="148" rx="4" fill="${lit[n] || '#f4f6fa'}"/>`;
+    if (n % 12 === 0) k += `<text x="${i * ww + ww / 2}" y="138" font-size="11" text-anchor="middle"
+      fill="${lit[n] ? '#06121b' : '#7a8396'}">C${Math.floor(n / 12) - 1}</text>`;
+  });
+  for (let n = LO; n <= HI; n++) if (isBlack(n))
+    k += `<rect x="${keyX(n)}" y="0" width="${bw}" height="92" rx="3" fill="${lit[n] || '#1a1d24'}"/>`;
+  kbd.innerHTML = k;
+
+  // Results: mistakes per bar
+  const m = [0,1,0,0,2,0,1,0,0,1,0,1,4,5,3,4,0,1,0,0,1,0,2,1];
+  document.getElementById('bars').innerHTML =
+    m.map((v, i) => `<div class="${i >= 12 && i <= 15 ? 'hot' : ''}" style="height:${8 + v * 62}px"></div>`).join('');
+</script>
+</body>
+</html>
